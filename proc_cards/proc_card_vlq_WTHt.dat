@@ -1,0 +1,40 @@
+#************************************************************
+#*                        MadGraph 5                        *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*    The MadGraph Development Team - Please visit us at    *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph 5                *
+#*                                                          *
+#*     run as ./bin/mg5  filename                           *
+#*                                                          *
+#************************************************************
+import model VLQ_v4_4FNS_UFO
+define p = g u c d s u~ c~ d~ s~ 
+define j = g u c d s u~ c~ d~ s~
+define bb = b b~
+define WW = w+ w-
+define tt = t t~
+define ferm = ve vm vt ve~ vm~ vt~ mu- ta- e- mu+ ta+ e+ u c d s u~ c~ d~ s~
+define TPTP = tp tp~
+define BPBP = bp bp~
+define XX = x x~
+define YY = y y~
+add process p p > j TPTP bb / tp tp~ p t t~ y y~ bp bp~ x x~ z h a, (TPTP > h tt)
+output VLQ_WTHt
+
+# This will create a directory PROC_$MODELNAME_$X
+# If you want to specify the path/name of the directory use
+# output PATH
+
+# To generate events, you can go to the created directory and 
+# run ./bin/generate_events
