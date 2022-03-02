@@ -158,10 +158,11 @@ def edit_me5_configuration(out_path, do_multicore, nb_core):
             f2.write(line)
     f_config.close()
     f2.close()
-            
+    subprocess.call("cp me5_configuration.txt {}//Cards/me5_configuration.txt && rm me5_configuration.txt".format(out_path), shell=True)
+
 def processor(outdir, outfile, run_command, runname):
     if bool(glob.glob(outdir)) and bool(glob.glob(outfile)):
-        print("Run {} already Exists".print(runname))
+        print("Run {} already Exists".format(runname))
         return True
 
     subprocess.call([run_command, runname, "-f"])
@@ -182,11 +183,20 @@ if __name__ == "__main__":
     parser.add_option("--run-list", dest="runs",
                       help="Give a JSON file with the list of run configs",
                       default='None')
+    parser.add_option("","--do-MultiCore", dest="domulticore",
+                      help="Set this flacg to run event generation with multicore",
+                      action='store_true',
+                      default=False)
+    parser.add_option("--nbCore", dest="nbcore",
+                      help="Number of cores",
+                      type=int,
+                      default=1)
     (options, args) = parser.parse_args()
 
     proc_card = str(options.proc)
     run_list_file = str(options.runs)
-    
+    do_multicore = bool(options.domulticore)
+    nb_core = int(options.nbcore)
     if proc_card == 'None':
         print("No Process Card Given! Exiting!")
         sys.exit(1)
@@ -219,7 +229,7 @@ if __name__ == "__main__":
         run_list_file = os.path.abspath(run_list_file)
         
     run_list = json.load(open(run_list_file))
-    edit_me5_configuration(out_path, do_multicore=True, nb_core=12)
+    edit_me5_configuration(out_path, do_multicore=do_multicore, nb_core=nb_core)
     for runname in run_list.keys():
         param_dict = run_list[runname]['params']
         reweight_dict = run_list[runname]['reweight']
@@ -227,8 +237,8 @@ if __name__ == "__main__":
         edit_param_card(out_path, params, param_dict)
         edit_run_card(out_path, run_dict)
         make_reweight_card(out_path, params, reweight_dict)
-        oudir = out_path + '/Events/' + runname
-        outfile = out_path + '/Events/' + runname + "*banner.txt"
+        outdir = out_path + '/Events/' + runname
+        outfile = out_path + '/Events/' + runname + "/{}*banner.txt".format(runname)
         run_command = out_path + "/bin/generate_events"
-        # if not processor(outdir, outfile, run_command, runname):
-        #     sys.exit(1)
+        if not processor(outdir, outfile, run_command, runname):
+            sys.exit(1)
