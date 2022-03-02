@@ -154,11 +154,31 @@ def edit_me5_configuration(out_path, do_multicore, nb_core):
             f2.write("run_mode = 2\n")
         elif "nb_core" in line and do_multicore:
             f2.write("nb_core = {}\n".format(nb_core))
+        elif "lhapdf_py3" in line:
+            f2.write("lhapdf_py3 = {}\n".format(os.environ['NEURWT_LHAPDFLOC'] + "/bin/lhapdf-config"))
         else:
             f2.write(line)
     f_config.close()
     f2.close()
-    subprocess.call("cp me5_configuration.txt {}//Cards/me5_configuration.txt && rm me5_configuration.txt".format(out_path), shell=True)
+    subprocess.call("cp me5_configuration.txt {}/Cards/me5_configuration.txt && rm me5_configuration.txt".format(out_path), shell=True)
+
+def edit_mg5_configuration(do_multicore, nb_core):
+    f_config = open(os.environ['NEURWT_MGLOC'] + "/input/mg5_configuration.txt")
+    f2 = open("mg5_configuration.txt", "w")
+    for line in f_config:
+        if "automatic_html_opening" in line:
+            f2.write("automatic_html_opening = False\n")
+        elif "run_mode" in line and do_multicore:
+            f2.write("run_mode = 2\n")
+        elif "nb_core" in line and do_multicore:
+            f2.write("nb_core = {}\n".format(nb_core))
+        elif "lhapdf_py3" in line:
+            f2.write("lhapdf_py3 = {}\n".format(os.environ['NEURWT_LHAPDFLOC'] + "/bin/lhapdf-config"))
+        else:
+            f2.write(line)
+    f_config.close()
+    f2.close()
+    subprocess.call("cp mg5_configuration.txt {}/input/mg5_configuration.txt && rm mg5_configuration.txt".format(os.environ['NEURWT_MGLOC']), shell=True)
 
 def processor(outdir, outfile, run_command, runname):
     if bool(glob.glob(outdir)) and bool(glob.glob(outfile)):
@@ -210,6 +230,8 @@ if __name__ == "__main__":
         print("Environment not setup! Please run the setup script!")
         sys.exit(1)
         
+    edit_mg5_configuration(do_multicore, nb_core)
+
     out_path, status = proc_runner(proc_card)
 
     if not status:

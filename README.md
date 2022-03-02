@@ -4,13 +4,17 @@ This is the code repository for Neural Reweighting Project. The dataset is gener
 
 ### First Setup
 
-Please checkout the repository from git with `git clone git@github.com:yorkiva/NeuralReweighting.git`. If you are using it for the first time, please run the command
+Please fork and checkout the repository from this github [url](https://github.com/yorkiva/NeuralReweighting). If you are using it for the first time, please run the command
 
 ```
-source setupMG.sh
+source setup_FirstTime.sh
 ```
 
-It will automatically download **MadGraph** version 2.8.3.2 and download any new physics UFO models necesary. The default UFOs explored in this project have been listed in `models_to_get.txt`. This file contains the `https` download links for each UFO, and obtained with the `wget` command. If you want to add new UFOs, please either add the corresponding link in the `models_to_get.txt` file or download them manually after running the `setupMG.sh` script and place the extracted model directories inside the `$NEURWT_MGLOC/models` directory. The environment variables `$NEURWT_MGLOC` and `$NEURWT_BASE_PATH` are set up by the setup script.
+It will automatically download **MadGraph** version 2.8.3.2 and **LHAPDF** version 6.4.0. It will also download any new physics UFO models necesary. The default UFOs explored in this project have been listed in `models_to_get.txt`. This file contains the `https` download links for each UFO, and obtained with the `wget` command. If you want to add new UFOs, please either add the corresponding link in the `models_to_get.txt` file or download them manually after running the `setupMG.sh` script and place the extracted model directories inside the `$NEURWT_MGLOC/models` directory. The following environment variables will be set by the script:
+
+- `$NEURWT_BASE_PATH`: Absolute path to the project directory
+- `$NEURWT_MGLOC`: Absolute path to the location of MadGraph  are set up by the setup script.
+- `$NEURWT_LHAPDFLOC`: Absolute path to the location of installed LHAPDF
 
 ### Returning Setup
 
