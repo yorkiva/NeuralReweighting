@@ -18,6 +18,8 @@
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
 #************************************************************
+
+convert model models/VLQ_v4_4FNS_UFO
 import model VLQ_v4_4FNS_UFO
 define p = g u c d s u~ c~ d~ s~ 
 define j = g u c d s u~ c~ d~ s~
