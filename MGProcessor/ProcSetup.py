@@ -1,4 +1,4 @@
-import os, sys, subprocess, json
+import os, sys, subprocess, json, glob
 from optparse import OptionParser
 
 def env_checker():
@@ -85,7 +85,7 @@ def get_param_list(out_path):
     
 def edit_param_card(out_path, params, param_dict):
     f_def = open(out_path + "/Cards/param_card_default.dat")
-    f_new = open("param_card.dat", "w")
+    f_new = open(out_path + "/Cards/param_card.dat", "w")
     for key in list(param_dict.keys()):
         if key not in params:
             print("param {} not found in the changeable param list! Please Check".format(key))
@@ -112,7 +112,7 @@ def edit_param_card(out_path, params, param_dict):
 
 def edit_run_card(out_path, run_dict):
     f_def = open(out_path + "/Cards/run_card_default.dat")
-    f_new = open("run_card.dat", "w")
+    f_new = open(out_path + "/Cards/run_card.dat", "w")
     for line in f_def:
         line_written = False
         for key in run_dict.keys():
@@ -132,7 +132,7 @@ def edit_run_card(out_path, run_dict):
     f_new.close()
             
 def make_reweight_card(out_path, params, reweight_dict):
-    f_rwt = open("reweight_card.dat", "w")
+    f_rwt = open(out_path + "/Cards/reweight_card.dat", "w")
     launch_line = "launch --rwgt_name="
     for rewt in reweight_dict.keys():
         f_rwt.write(launch_line + rewt + '\n')
@@ -143,7 +143,37 @@ def make_reweight_card(out_path, params, reweight_dict):
                 f_rwt.write('\tset ' + str(key) + ' ' + str(reweight_dict[rewt][key]) + '\n')
         f_rwt.write('\n\n')
     f_rwt.close()
-    
+
+def edit_me5_configuration(out_path, do_multicore, nb_core):
+    f_config = open(out_path + "/Cards/me5_configuration.txt")
+    f2 = open("me5_configuration.txt", "w")
+    for line in f_config:
+        if "automatic_html_opening" in line:
+            f2.write("automatic_html_opening = False\n")
+        elif "run_mode" in line and do_multicore:
+            f2.write("run_mode = 2\n")
+        elif "nb_core" in line and do_multicore:
+            f2.write("nb_core = {}\n".format(nb_core))
+        else:
+            f2.write(line)
+    f_config.close()
+    f2.close()
+            
+def processor(outdir, outfile, run_command, runname):
+    if bool(glob.glob(outdir)) and bool(glob.glob(outfile)):
+        print("Run {} already Exists".print(runname))
+        return True
+
+    subprocess.call([run_command, runname, "-f"])
+        
+    if not (bool(glob.glob(outdir)) and bool(glob.glob(outfile))):
+        print("Something went wrong! Maybe MG didn't run properly. Check Logs and Retry Later")
+        return False
+
+    return True
+
+
+
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("--proc-card", dest="proc",
@@ -189,7 +219,7 @@ if __name__ == "__main__":
         run_list_file = os.path.abspath(run_list_file)
         
     run_list = json.load(open(run_list_file))
-    
+    edit_me5_configuration(out_path, do_multicore=True, nb_core=12)
     for runname in run_list.keys():
         param_dict = run_list[runname]['params']
         reweight_dict = run_list[runname]['reweight']
@@ -197,6 +227,8 @@ if __name__ == "__main__":
         edit_param_card(out_path, params, param_dict)
         edit_run_card(out_path, run_dict)
         make_reweight_card(out_path, params, reweight_dict)
-        
-
-    
+        oudir = out_path + '/Events/' + runname
+        outfile = out_path + '/Events/' + runname + "*banner.txt"
+        run_command = out_path + "/bin/generate_events"
+        # if not processor(outdir, outfile, run_command, runname):
+        #     sys.exit(1)
