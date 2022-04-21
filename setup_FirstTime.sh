@@ -61,27 +61,31 @@ if [[ -z $NEURWT_LHAPDFLOC ]]; then
     if [[ -z LHAPDF_PYTHON_PATH ]]; then
 	echo "LHAPDF Python Path not found!"
     else
-	export PYTHONPATH=$PYTHONPATH:$LHAPDF_PYTHON_PATH
+	if [[ -z $PYTHONPATH ]]; then
+	    export PYTHONPATH=$LHAPDF_PYTHON_PATH
+	else
+	    export PYTHONPATH=$PYTHONPATH:$LHAPDF_PYTHON_PATH
+	fi
     fi
     unset LHAPDF_PYTHON_PATH
 fi  
-## Downloading and getting the correct UFO models
+# ## Downloading and getting the correct UFO models
 
-Models=`cat models_to_get.txt`
-unset IFS
-for model in ${Models[*]}
-do
-    echo "Downloading " $model
-    wget $model
-    export IFS='/'
-    read -a strarr <<< "$model"
-    modelname=${strarr[-1]}
-    #echo "cd $NEURWT_MGLOC/models/"
-    #echo $modelname
-    cd "$NEURWT_MGLOC/models/" && tar -xzvf "$NEURWT_BASE_PATH/$modelname" && cd -
-    unset IFS
-done
+# Models=`cat models_to_get.txt`
+# unset IFS
+# for model in ${Models[*]}
+# do
+#     echo "Downloading " $model
+#     wget $model
+#     export IFS='/'
+#     read -a strarr <<< "$model"
+#     modelname=${strarr[-1]}
+#     #echo "cd $NEURWT_MGLOC/models/"
+#     #echo $modelname
+#     cd "$NEURWT_MGLOC/models/" && tar -xzvf "$NEURWT_BASE_PATH/$modelname" && cd -
+#     unset IFS
+# done
 
-unset Models
-unset model
-unset modelname
+# unset Models
+# unset model
+# unset modelname

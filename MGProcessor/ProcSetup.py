@@ -210,7 +210,7 @@ if __name__ == "__main__":
     parser.add_option("--nbCore", dest="nbcore",
                       help="Number of cores",
                       type=int,
-                      default=1)
+                      default=-1)
     (options, args) = parser.parse_args()
 
     proc_card = str(options.proc)

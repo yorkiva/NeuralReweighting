@@ -33,7 +33,11 @@ do
 	     echo "LHAPDF Python Path not found!"
 	     exit 1
 	 else
-	     export PYTHONPATH=$PYTHONPATH:$LHAPDF_PYTHON_PATH
+	     if [[ -z $PYTHONPATH ]]; then
+		 export PYTHONPATH=$LHAPDF_PYTHON_PATH
+             else
+		 export PYTHONPATH=$PYTHONPATH:$LHAPDF_PYTHON_PATH
+             fi
 	 fi
 	 unset LHAPDF_PYTHON_PATH
     fi
