@@ -4,3 +4,6 @@ MG5*
 *tgz
 *tar
 *tar.gz
+*npy
+*csv
+__pycache__
