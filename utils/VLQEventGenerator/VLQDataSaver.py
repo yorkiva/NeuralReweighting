@@ -4,7 +4,7 @@ import lxml.etree as ET
 import pandas as pd
 import re
 
-def lhe_to_array(lhefilename, mode, msim, gsim):
+def lhe_to_array(lhefilename, mode, msim, gsim, start=0, end=500):
     cols = ['mode',
             'Msim',
             'Gsim',
@@ -36,11 +36,16 @@ def lhe_to_array(lhefilename, mode, msim, gsim):
             'Mtarget',
             'Gtarget',
             'f_rwt']
-    events = []
+    entries = []
+    entryindex = 0
     eventindex = 0
     tree = ET.iterparse(lhefilename, events = ("end",), tag = "event")
     tree = iter(tree)
     for event, elem in tree:
+        if not (eventindex >= start and eventindex < end):
+            eventindex += 1
+            continue
+        eventindex +=1
         this_event = {}
         eventinfo = elem.text.strip().split('\n')
         particleindex = 0
@@ -85,7 +90,7 @@ def lhe_to_array(lhefilename, mode, msim, gsim):
             pass
 
         for wt in this_event_wts:
-            events.append([mode, msim, gsim, weight] + [0]*(len(cols)-4))
+            entries.append([mode, msim, gsim, weight] + [0]*(len(cols)-4))
             pout1 = False
             pout2 = False
             pout3 = False
@@ -95,63 +100,64 @@ def lhe_to_array(lhefilename, mode, msim, gsim):
                 if this_particle['status'] not in [-1, 1]:
                     continue
                 if this_particle['status'] == -1 and this_particle['pz'] > 0.:
-                    events[eventindex][cols.index('pz_in1')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_in1')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('pz_in1')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_in1')] = this_particle['pdgid']
                 elif this_particle['status'] == -1 and this_particle['pz'] < 0.:
-                    events[eventindex][cols.index('pz_in2')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_in2')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('pz_in2')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_in2')] = this_particle['pdgid']
                 elif this_particle['status'] == 1 and (not pout1 and not pout2 and not pout3 and not pout4):
-                    events[eventindex][cols.index('pz_out1')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_out1')] = this_particle['pdgid']
-                    events[eventindex][cols.index('px_out1')] = this_particle['px']
-                    events[eventindex][cols.index('py_out1')] = this_particle['py']
-                    events[eventindex][cols.index('e_out1')] = this_particle['e']
+                    entries[entryindex][cols.index('pz_out1')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_out1')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('px_out1')] = this_particle['px']
+                    entries[entryindex][cols.index('py_out1')] = this_particle['py']
+                    entries[entryindex][cols.index('e_out1')] = this_particle['e']
                     pout1 = True
                 elif this_particle['status'] == 1 and (pout1 and not pout2 and not pout3 and not pout4):
-                    events[eventindex][cols.index('pz_out2')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_out2')] = this_particle['pdgid']
-                    events[eventindex][cols.index('px_out2')] = this_particle['px']
-                    events[eventindex][cols.index('py_out2')] = this_particle['py']
-                    events[eventindex][cols.index('e_out2')] = this_particle['e']
+                    entries[entryindex][cols.index('pz_out2')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_out2')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('px_out2')] = this_particle['px']
+                    entries[entryindex][cols.index('py_out2')] = this_particle['py']
+                    entries[entryindex][cols.index('e_out2')] = this_particle['e']
                     pout2 = True
                 elif this_particle['status'] == 1 and (pout1 and pout2 and not pout3 and not pout4):
-                    events[eventindex][cols.index('pz_out3')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_out3')] = this_particle['pdgid']
-                    events[eventindex][cols.index('px_out3')] = this_particle['px']
-                    events[eventindex][cols.index('py_out3')] = this_particle['py']
-                    events[eventindex][cols.index('e_out3')] = this_particle['e']
+                    entries[entryindex][cols.index('pz_out3')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_out3')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('px_out3')] = this_particle['px']
+                    entries[entryindex][cols.index('py_out3')] = this_particle['py']
+                    entries[entryindex][cols.index('e_out3')] = this_particle['e']
                     pout3 = True
                 elif this_particle['status'] == 1 and (pout1 and pout2 and pout3 and not pout4):
-                    events[eventindex][cols.index('pz_out4')] = this_particle['pz']
-                    events[eventindex][cols.index('pid_out4')] = this_particle['pdgid']
-                    events[eventindex][cols.index('px_out4')] = this_particle['px']
-                    events[eventindex][cols.index('py_out4')] = this_particle['py']
-                    events[eventindex][cols.index('e_out4')] = this_particle['e']
-                events[eventindex][cols.index('Mtarget')] = wt[0]
-                events[eventindex][cols.index('Gtarget')] = wt[1]
-                events[eventindex][cols.index('f_rwt')] = wt[2]
-            eventindex += 1
+                    entries[entryindex][cols.index('pz_out4')] = this_particle['pz']
+                    entries[entryindex][cols.index('pid_out4')] = this_particle['pdgid']
+                    entries[entryindex][cols.index('px_out4')] = this_particle['px']
+                    entries[entryindex][cols.index('py_out4')] = this_particle['py']
+                    entries[entryindex][cols.index('e_out4')] = this_particle['e']
+                entries[entryindex][cols.index('Mtarget')] = wt[0]
+                entries[entryindex][cols.index('Gtarget')] = wt[1]
+                entries[entryindex][cols.index('f_rwt')] = wt[2]
+            entryindex += 1
         elem.clear()
-        if eventindex >= 250000:
-            break
-    return cols, events
+    return cols, entries
 
 
-def lhe_to_csv(lhefiles, target_file_name):
+def lhe_to_csv(lhefiles, target_file_name, start=0, end=500):
     msim = 1500.
     gsim = 750.
     mode = 1
     for idx, lhefile in enumerate(lhefiles):
         if lhefile.endswith(".gz"):
             subprocess.call("gunzip {}".format(lhefile), shell=True)
-        cols, events = lhe_to_array(lhefile, mode, msim, gsim)
+        cols, events = lhe_to_array(lhefile, mode, msim, gsim, start, end)
         print("File {} done with {} entries".format(lhefile, len(events)))
-        df = pd.DataFrame(events, columns=cols)
         if idx == 0:
-            df.to_csv(target_file_name, mode='w', index=False, header=True)
+            df = pd.DataFrame(events, columns=cols)
+            # df.to_csv(target_file_name, mode='w', index=False, header=True)
         else:
-            df.to_csv(target_file_name, mode='a', index=False, header=False)
-        del cols, events, df
+            df.append(pd.DataFrame(events, columns=cols), ignore_index = True)
+            # df.to_csv(target_file_name, mode='a', index=False, header=False)
+    df = df.sample(frac = 1).reset_index(drop=True)
+    df.to_hdf(target_file_name, key="VLQ_Reweighting_data", mode="w")
+    df.to_csv(target_file_name.replace(".h5", ".csv"), mode="w", index=False, header=True)
 
 
 
