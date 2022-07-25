@@ -1,0 +1,28 @@
+{
+   "THDM_MX0800": {
+      "params": {
+         "MHH": 800.0,
+         "WHH": 800.0
+      },
+      "run": {
+         "bwcutoff": 10000,
+         "nevents": 20000,
+         "use_syst": "False",
+         "systematics_program": "None"
+      },
+      "reweight": {
+         "M0600": {
+            "MHH": 600.0,
+            "WHH": 0.01
+         },
+         "M0800": {
+            "MHH": 800.0,
+            "WHH": 0.01
+         },
+         "M1000": {
+            "MHH": 1000.0,
+            "WHH": 0.01
+         }
+      }
+   }
+}

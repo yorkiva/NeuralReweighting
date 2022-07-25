@@ -10,11 +10,12 @@ Please fork and checkout the repository from this github [url](https://github.co
 source setup_FirstTime.sh
 ```
 
-It will automatically download **MadGraph** version 2.8.3.2 and **LHAPDF** version 6.4.0. It will also download any new physics UFO models necesary. The default UFOs explored in this project have been listed in `models_to_get.txt`. This file contains the `https` download links for each UFO, and obtained with the `wget` command. If you want to add new UFOs, please either add the corresponding link in the `models_to_get.txt` file or download them manually after running the `setupMG.sh` script and place the extracted model directories inside the `$NEURWT_MGLOC/models` directory. The following environment variables will be set by the script:
+It will automatically download **MadGraph** version 2.8.3.2 and **LHAPDF** version 6.4.0. It will also download any new physics UFO models necesary. The default UFOs explored in this project have been listed in `models_to_get.txt`. This file contains the `https` download links for each UFO, and obtained with the `wget` command. The following environment variables will be set by the script:
 
 - `$NEURWT_BASE_PATH`: Absolute path to the project directory
 - `$NEURWT_MGLOC`: Absolute path to the location of MadGraph  are set up by the setup script.
 - `$NEURWT_LHAPDFLOC`: Absolute path to the location of installed LHAPDF
+
 
 ### Returning Setup
 
@@ -25,3 +26,8 @@ source setup.sh
 ```
 
 This will setup the necessary environment variables necessary for the project.
+
+### Getting the correct UFO models
+
+If you want to add new UFO models for your event generation, please either add the corresponding link in the `models_to_get.txt` file  after running the `setup_FirstTime.sh` (if this is the first time you are setting it up) or the `setup.sh` script. Then running the `get_models.sh` script will download those models and place the extracted model directories inside the `$NEURWT_MGLOC/models` directory. You can also download them manually and place them in the desired location.
+
